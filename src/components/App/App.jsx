@@ -7,11 +7,19 @@ import Description from "../Description/Description";
 const LS_KEY = "options";
 
 function App() {
-  const [options, setOptions] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  });
+  const optionsFromLocalstorage = localStorage.getItem(LS_KEY);
+  const parsedoptionsFromLocalstorage = JSON.parse(optionsFromLocalstorage);
+
+  const initialOptions = parsedoptionsFromLocalstorage
+    ? parsedoptionsFromLocalstorage
+    : { good: 0, neutral: 0, bad: 0 };
+
+  const [options, setOptions] = useState(initialOptions);
+
+  useEffect(() => {
+    const savedOptions = JSON.stringify(options);
+    localStorage.setItem(LS_KEY, savedOptions);
+  }, [options]);
 
   const { good, neutral, bad } = options;
   const totalFeedback = good + neutral + bad;
@@ -19,19 +27,6 @@ function App() {
   const positiveFeedbackRate = Math.round(
     ((good + neutral) / totalFeedback) * 100
   );
-
-  useEffect(() => {
-    const optionsFromLocalstorage = localStorage.getItem(LS_KEY);
-    const parsedoptionsFromLocalstorage = JSON.parse(optionsFromLocalstorage);
-    if (parsedoptionsFromLocalstorage) {
-      setOptions(parsedoptionsFromLocalstorage);
-    }
-  }, []);
-
-  useEffect(() => {
-    const savedOptions = JSON.stringify(options);
-    localStorage.setItem(LS_KEY, savedOptions);
-  }, [options]);
 
   const updateFeedback = (feedbackType) => {
     setOptions({
@@ -68,3 +63,16 @@ function App() {
 }
 
 export default App;
+// useEffect(() => {
+//   const optionsFromLocalstorage = localStorage.getItem(LS_KEY);
+//   const parsedoptionsFromLocalstorage = JSON.parse(optionsFromLocalstorage);
+//   if (parsedoptionsFromLocalstorage) {
+//     setOptions(parsedoptionsFromLocalstorage);
+//   }
+// }, []);
+
+// {
+//   good: 0,
+//   neutral: 0,
+//   bad: 0,
+// }
